@@ -8,3 +8,11 @@ runs/                # YOLO训练输出
 *.pth
 .DS_Store
 .ipynb_checkpoints/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+*.key
+.secrets/
+secrets/
