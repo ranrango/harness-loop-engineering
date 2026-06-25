@@ -9,14 +9,18 @@ dependencies = [
     "opencv-python>=4.8.0",
     "numpy>=1.24.0",
     "matplotlib>=3.7.0",
-    "torch>=2.0.0",          # uv 会自动选 CPU/GPU 版
+    "torch>=2.0.0",
     "torchvision>=0.15.0",
 ]
 
+[project.optional-dependencies]
+smoke = [
+    "langchain-openai>=0.1.0",
+]
+
 [tool.uv]
-# 锁定平台（可选）
 dev-dependencies = [
     "jupyter",
-    "black",      # 代码格式化
-    "pytest",     # 测试
+    "black",
+    "pytest",
 ]

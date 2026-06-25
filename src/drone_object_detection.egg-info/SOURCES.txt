@@ -1,8 +1,0 @@
-README.md
-pyproject.toml
-src/detect.py
-src/drone_object_detection.egg-info/PKG-INFO
-src/drone_object_detection.egg-info/SOURCES.txt
-src/drone_object_detection.egg-info/dependency_links.txt
-src/drone_object_detection.egg-info/requires.txt
-src/drone_object_detection.egg-info/top_level.txt
