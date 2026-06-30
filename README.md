@@ -1,6 +1,6 @@
 # Harness & Loop Engineering — 初学者参考指南
 
-> 从零理解测试装具（Harness）与事件驱动循环（Loop）工程，每个概念都有可运行的示例代码。
+> 从零理解测试装具（Harness）与事件驱动循环（Loop）工程，每个概念都有可运行的示例代码。涵盖核心概念、多语言实践，以及工业界现状与前沿发展。
 
 ---
 
@@ -12,12 +12,14 @@ harness-loop-engineering/
 │   ├── 01-concepts/       # 核心概念与术语
 │   ├── 02-python/         # Python 示例（pytest）
 │   ├── 03-javascript/     # JavaScript 示例（Jest）
-│   └── 04-go/             # Go 示例（testing + gomock）
+│   ├── 04-go/             # Go 示例（testing + testify）
+│   └── 05-industry/       # 行业发展 & 工业界实践 ← NEW
 └── loop/                  # 事件循环工程
     ├── 01-concepts/       # 核心概念
     ├── 02-python/         # asyncio 示例
     ├── 03-javascript/     # Node.js Event Loop 示例
-    └── 04-go/             # goroutine + channel 示例
+    ├── 04-go/             # goroutine + channel 示例
+    └── 05-industry/       # 行业发展 & 工业界实践 ← NEW
 ```
 
 ---
@@ -31,7 +33,8 @@ harness-loop-engineering/
 | [概念](./harness/01-concepts/) | Test Double、金字塔、生命周期 | ⭐ 入门 |
 | [Python 示例](./harness/02-python/) | pytest、Fixture、Mock、参数化 | ⭐⭐ 初级 |
 | [JavaScript 示例](./harness/03-javascript/) | Jest、Mock、快照、Timer | ⭐⭐ 初级 |
-| [Go 示例](./harness/04-go/) | testing、表格驱动、gomock | ⭐⭐ 初级 |
+| [Go 示例](./harness/04-go/) | testing、表格驱动、testify | ⭐⭐ 初级 |
+| [行业发展 & 工业界实践](./harness/05-industry/) | 发展历史、Google/Meta/Netflix 案例、AI 测试、Mutation Testing | ⭐⭐⭐ 扩展 |
 
 ### Loop Engineering（事件循环工程）
 
@@ -41,6 +44,7 @@ harness-loop-engineering/
 | [Python 示例](./loop/02-python/) | asyncio、Task、Queue | ⭐⭐ 初级 |
 | [JavaScript 示例](./loop/03-javascript/) | Event Loop、Promise、Worker | ⭐⭐ 初级 |
 | [Go 示例](./loop/04-go/) | goroutine、channel、select | ⭐⭐ 初级 |
+| [行业发展 & 工业界实践](./loop/05-industry/) | C10K 问题、Discord/Cloudflare/Uber 案例、Java Loom、结构化并发 | ⭐⭐⭐ 扩展 |
 
 ---
 
