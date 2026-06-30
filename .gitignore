@@ -1,18 +1,32 @@
-# .gitignore
+# Python
 __pycache__/
-*.pyc
-.venv/               # uv 创建的虚拟环境
-data/                # 大数据集（可选）
-runs/                # YOLO训练输出
+*.py[cod]
+*.so
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Data and model artifacts (keep out of version control)
+data/
+runs/
+weights/
 *.pt
 *.pth
-.DS_Store
+*.onnx
+*.engine
+
+# Notebooks
 .ipynb_checkpoints/
 
-# Local secrets
+# Credentials
 .env
 .env.*
 !.env.example
 *.key
 .secrets/
 secrets/
+
+# OS
+.DS_Store
+Thumbs.db

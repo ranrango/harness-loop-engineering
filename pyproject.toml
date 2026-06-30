@@ -1,9 +1,21 @@
-# pyproject.toml
 [project]
 name = "drone-object-detection"
 version = "0.1.0"
-description = "Small object detection in drone images using YOLOv8"
+description = "基于 YOLOv8 在 VisDrone2019-DET 数据集上的无人机航拍小目标检测"
+readme = "README.md"
 requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "ranrango" }]
+keywords = ["object-detection", "yolov8", "drone", "visdrone", "computer-vision"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
 dependencies = [
     "ultralytics>=8.2.0",
     "opencv-python>=4.8.0",
@@ -13,14 +25,46 @@ dependencies = [
     "torchvision>=0.15.0",
 ]
 
+[project.urls]
+Repository = "https://github.com/ranrango/drone-object-detection"
+Issues = "https://github.com/ranrango/drone-object-detection/issues"
+
+[project.scripts]
+drone-detect  = "src.detect:main"
+drone-train   = "src.train:main"
+drone-val     = "src.val:main"
+drone-convert = "scripts.convert_visdrone_to_yolo:main"
+
 [project.optional-dependencies]
-smoke = [
-    "langchain-openai>=0.1.0",
+smoke = ["langchain-openai>=0.1.0"]
+dev   = [
+    "pytest>=7.0",
+    "pytest-cov",
+    "ruff",
+    "black",
+    "jupyter",
 ]
 
-[tool.uv]
-dev-dependencies = [
-    "jupyter",
-    "black",
-    "pytest",
-]
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*", "scripts*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "-q --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
