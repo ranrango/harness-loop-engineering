@@ -19,6 +19,8 @@
 
 ```
 harness-loop-engineering/
+├── PRACTICAL_GUIDE.md          # 从概念到落地的实践手册
+├── applications/               # 行业应用案例
 ├── harness/                    # 驾驭工程
 │   ├── 01-concepts/            # 核心概念：什么是 Harness Engineering
 │   ├── 02-core-components/     # 核心组件详解
@@ -39,6 +41,8 @@ harness-loop-engineering/
 
 | 章节 | 内容 |
 |------|------|
+| [实践手册](./PRACTICAL_GUIDE.md) | 如何把 Harness 与 Loop 落到真实 AI 应用 |
+| [应用案例](./applications/) | 客服、代码、工业、研究等场景的组合设计 |
 | [核心概念](./harness/01-concepts/) | 定义、起源、与传统工程的关系 |
 | [核心组件](./harness/02-core-components/) | Prompt 工程、Guardrails、Evals、RAG、Tool Use |
 | [工业界现状](./harness/03-industry/) | 发展历程、各公司实践、前沿趋势 |
@@ -74,9 +78,44 @@ harness-loop-engineering/
 
 ---
 
+## 从概念到落地
+
+构建真实 AI 应用时，建议按下面的顺序推进：
+
+1. **先建 Harness**：明确模型角色、上下文来源、工具权限、输出格式、安全护栏和评估集。
+2. **再建 Loop**：定义触发条件、任务规划、工具调用、观察反馈、循环内评估、修复策略和停止条件。
+3. **最后接业务系统**：接入工单、CI、知识库、告警、审批流、监控和日志。
+
+最小生产闭环可以理解为：
+
+```
+输入/事件
+  ↓
+Harness: Prompt + RAG + Tool Schema + Guardrails + Evals
+  ↓
+Loop: Plan/ReAct -> Act -> Observe -> Verify -> Repair/Stop
+  ↓
+业务结果: 答复、草稿、PR、工单、报告、告警升级
+```
+
+更多设计模板见 [实践手册](./PRACTICAL_GUIDE.md)。
+
+---
+
 ## 推荐阅读顺序
 
 1. 先读 Harness 概念 → 理解为什么 LLM 需要被"驾驭"
 2. 再读 Loop 概念 → 理解 Agent 如何在约束下持续运行
 3. 对照工业界章节 → 看真实公司怎么做
-4. 跑通代码示例 → 动手实践
+4. 阅读实践手册 → 学会设计真实系统
+5. 跑通代码示例 → 动手实践
+6. 对照应用案例 → 迁移到自己的业务场景
+
+---
+
+## 仓库适合谁
+
+- 想把 ChatGPT/Claude/Gemini/OpenAI API 做成生产级应用的开发者
+- 正在搭 RAG、Agent、LLMOps、AI Gateway、企业 Copilot 的工程团队
+- 想理解 Prompt Engineering 之后下一层工程能力的人
+- 需要评估 AI Agent 安全性、可靠性和工业落地路径的产品/技术负责人
