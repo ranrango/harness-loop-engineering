@@ -11,9 +11,7 @@ from langchain_openai import OpenAI
 
 api_key = os.environ.get("DEEPSEEK_API_KEY")
 if not api_key:
-    raise RuntimeError(
-        "DEEPSEEK_API_KEY is not set. Export it before running this script."
-    )
+    raise RuntimeError("DEEPSEEK_API_KEY is not set. Export it before running this script.")
 
 llm = OpenAI(
     api_key=api_key,
