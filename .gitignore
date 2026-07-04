@@ -1,9 +1,15 @@
 # Dependency directories
 node_modules/
+vendor/
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.so
+.venv/
+*.egg-info/
+dist/
+build/
 .pytest_cache/
 htmlcov/
 .coverage
@@ -12,7 +18,26 @@ coverage.xml
 # Go
 *.test
 *.out
-vendor/
+
+# Data and model artifacts
+data/
+runs/
+weights/
+*.pt
+*.pth
+*.onnx
+*.engine
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Credentials
+.env
+.env.*
+!.env.example
+*.key
+.secrets/
+secrets/
 
 # IDE
 .vscode/
