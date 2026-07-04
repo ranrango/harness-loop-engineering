@@ -17,10 +17,10 @@ import time
 from dataclasses import dataclass, field
 from typing import Callable
 
-
 # ─────────────────────────────────────────────────────────
 # 基础工具系统
 # ─────────────────────────────────────────────────────────
+
 
 @dataclass
 class Tool:
@@ -82,6 +82,7 @@ def mock_write_file(filename: str, content: str) -> str:
 # 1. ReAct Loop
 # ─────────────────────────────────────────────────────────
 
+
 @dataclass
 class ReActStep:
     thought: str
@@ -102,18 +103,18 @@ def mock_llm_react(prompt: str, step_num: int) -> dict:
         {
             "thought": "我需要查询北京天气才能给出穿衣建议",
             "action": "web_search",
-            "action_input": {"query": "北京天气"}
+            "action_input": {"query": "北京天气"},
         },
         {
             "thought": "天气是 28°C 晴天，适合穿薄衣服。需要计算一下体感温度",
             "action": "calculator",
-            "action_input": {"expression": "28 * 0.9"}
+            "action_input": {"expression": "28 * 0.9"},
         },
         {
             "thought": "体感温度约 25.2°C，信息足够了，可以给出建议",
             "is_final": True,
-            "final_answer": "北京今天 28°C 晴天，建议穿短袖 T 恤 + 轻薄长裤，做好防晒准备。"
-        }
+            "final_answer": "北京今天 28°C 晴天，建议穿短袖 T 恤 + 轻薄长裤，做好防晒准备。",
+        },
     ]
     idx = min(step_num, len(steps) - 1)
     return steps[idx]
@@ -184,6 +185,7 @@ def run_react_loop(
 # 2. Plan-and-Execute Loop
 # ─────────────────────────────────────────────────────────
 
+
 @dataclass
 class SubTask:
     id: str
@@ -231,7 +233,8 @@ def run_plan_execute(goal: str):
     while len(completed) < len(tasks):
         # 找出所有依赖已满足的待执行任务
         ready = [
-            t for t in tasks
+            t
+            for t in tasks
             if t.status == "pending" and all(dep in completed for dep in t.depends_on)
         ]
 
@@ -254,6 +257,7 @@ def run_plan_execute(goal: str):
 # ─────────────────────────────────────────────────────────
 # 3. Reflexion Loop（反思循环）
 # ─────────────────────────────────────────────────────────
+
 
 def mock_llm_with_reflection(task: str, reflection: str | None, attempt: int) -> dict:
     """模拟带反思的 LLM"""

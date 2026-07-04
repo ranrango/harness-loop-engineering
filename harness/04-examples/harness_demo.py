@@ -49,7 +49,7 @@ def parse_structured_output(raw_output: str, schema: dict) -> dict:
         pass
 
     # 提取 JSON 块（处理 LLM 在 JSON 前后加文字的情况）
-    json_match = re.search(r'\{.*\}', raw_output, re.DOTALL)
+    json_match = re.search(r"\{.*\}", raw_output, re.DOTALL)
     if json_match:
         try:
             return json.loads(json_match.group())
@@ -63,29 +63,19 @@ def parse_structured_output(raw_output: str, schema: dict) -> dict:
 PRODUCT_REVIEW_SCHEMA = {
     "type": "object",
     "properties": {
-        "sentiment": {
-            "type": "string",
-            "enum": ["positive", "negative", "neutral"]
-        },
-        "score": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 5
-        },
-        "key_points": {
-            "type": "array",
-            "items": {"type": "string"},
-            "maxItems": 3
-        },
-        "summary": {"type": "string"}
+        "sentiment": {"type": "string", "enum": ["positive", "negative", "neutral"]},
+        "score": {"type": "integer", "minimum": 1, "maximum": 5},
+        "key_points": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
+        "summary": {"type": "string"},
     },
-    "required": ["sentiment", "score", "key_points", "summary"]
+    "required": ["sentiment", "score", "key_points", "summary"],
 }
 
 
 # ─────────────────────────────────────────────────────────
 # 2. Guardrail — 输出验证护栏
 # ─────────────────────────────────────────────────────────
+
 
 class OutputGuardrail:
     """
@@ -117,8 +107,8 @@ class OutputGuardrail:
 # 内置的常用 Guardrail 检查
 def check_no_pii(output: str) -> tuple[bool, str]:
     """检测是否包含手机号、邮箱等 PII"""
-    phone_pattern = r'1[3-9]\d{9}'
-    email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    phone_pattern = r"1[3-9]\d{9}"
+    email_pattern = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
     if re.search(phone_pattern, output):
         return False, "输出包含手机号码"
     if re.search(email_pattern, output):
@@ -128,12 +118,14 @@ def check_no_pii(output: str) -> tuple[bool, str]:
 
 def check_length(min_len: int = 10, max_len: int = 2000):
     """工厂函数：生成长度检查器"""
+
     def _check(output: str) -> tuple[bool, str]:
         if len(output) < min_len:
             return False, f"输出过短（{len(output)} 字符，最少 {min_len}）"
         if len(output) > max_len:
             return False, f"输出过长（{len(output)} 字符，最多 {max_len}）"
         return True, ""
+
     return _check
 
 
@@ -148,9 +140,7 @@ def check_no_refusal(output: str) -> tuple[bool, str]:
 
 # 组装护栏
 customer_service_guardrail = (
-    OutputGuardrail()
-    .add_check("no_pii", check_no_pii)
-    .add_check("length", check_length(20, 500))
+    OutputGuardrail().add_check("no_pii", check_no_pii).add_check("length", check_length(20, 500))
 )
 
 
@@ -164,11 +154,12 @@ from dataclasses import dataclass
 @dataclass
 class EvalCase:
     """单个测试用例"""
+
     id: str
     input: str
-    expected_keywords: list[str]    # 输出中应该包含的关键词
-    forbidden_keywords: list[str]   # 输出中不应该包含的关键词
-    min_score: float = 0.6          # 最低通过分数
+    expected_keywords: list[str]  # 输出中应该包含的关键词
+    forbidden_keywords: list[str]  # 输出中不应该包含的关键词
+    min_score: float = 0.6  # 最低通过分数
 
 
 @dataclass
@@ -200,7 +191,7 @@ def run_keyword_eval(case: EvalCase, actual_output: str) -> EvalResult:
             "keyword_total": len(case.expected_keywords),
             "violations": violations,
             "score": score,
-        }
+        },
     )
 
 
@@ -233,6 +224,7 @@ def run_eval_suite(cases: list[EvalCase], llm_fn) -> dict:
 # 4. 简单 RAG 管道骨架（无需外部依赖的示意版）
 # ─────────────────────────────────────────────────────────
 
+
 class SimpleRAGPipeline:
     """
     最简化的 RAG 管道，演示核心流程。
@@ -248,12 +240,14 @@ class SimpleRAGPipeline:
         生产中：对每个 chunk 做 Embedding，存入向量库。
         """
         # 简单按句子切块（生产中用语义分块）
-        sentences = [s.strip() for s in text.split('。') if s.strip()]
+        sentences = [s.strip() for s in text.split("。") if s.strip()]
         for sent in sentences:
-            self._chunks.append({
-                "text": sent,
-                "metadata": metadata or {},
-            })
+            self._chunks.append(
+                {
+                    "text": sent,
+                    "metadata": metadata or {},
+                }
+            )
 
     def retrieve(self, query: str, top_k: int = 3) -> list[str]:
         """
@@ -273,8 +267,7 @@ class SimpleRAGPipeline:
 
     def build_prompt(self, query: str, retrieved_chunks: list[str]) -> str:
         """把检索结果注入 Prompt"""
-        context = "\n\n".join(f"[来源 {i+1}]\n{chunk}"
-                              for i, chunk in enumerate(retrieved_chunks))
+        context = "\n\n".join(f"[来源 {i+1}]\n{chunk}" for i, chunk in enumerate(retrieved_chunks))
         return f"""请根据以下参考资料回答问题。
 如果参考资料中没有相关信息，请明确说明"根据现有资料无法回答"，不要编造。
 
@@ -293,8 +286,7 @@ class SimpleRAGPipeline:
 if __name__ == "__main__":
     print("=== 1. Structured Output Prompt ===")
     prompt = build_structured_prompt(
-        "这款耳机音质很好，但续航只有 4 小时，有点失望",
-        PRODUCT_REVIEW_SCHEMA
+        "这款耳机音质很好，但续航只有 4 小时，有点失望", PRODUCT_REVIEW_SCHEMA
     )
     print(prompt[:300] + "...\n")
 
