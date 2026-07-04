@@ -46,7 +46,7 @@ dev   = [
     "pytest>=7.0",
     "pytest-cov",
     "ruff",
-    "black==26.5.1",
+    "black==24.8.0",
     "jupyter",
 ]
 
