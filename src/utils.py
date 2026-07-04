@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-
 # VisDrone2019-DET 的 10 个目标类别（0-based）
 VISDRONE_CLASSES: dict[int, str] = {
     0: "行人",

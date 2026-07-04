@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import struct
 import zlib
-from pathlib import Path
 
 
 def make_png(w: int, h: int) -> bytes:

@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-import textwrap
-from pathlib import Path
-
-import pytest
 import sys
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from scripts.convert_visdrone_to_yolo import (
-    ConvertStats,
+    _read_image_dimensions,
     convert_one,
     convert_split,
-    _read_image_dimensions,
 )
-from tests.image_helpers import make_jpeg as _make_jpeg, make_png as _make_png
-
+from tests.image_helpers import make_jpeg as _make_jpeg
+from tests.image_helpers import make_png as _make_png
 
 # ── _read_image_dimensions ───────────────────────────────────────────────────
+
 
 def test_读取JPEG尺寸(tmp_path):
     p = tmp_path / "img.jpg"
@@ -45,6 +42,7 @@ def test_损坏文件返回None(tmp_path):
 
 # ── convert_one ──────────────────────────────────────────────────────────────
 
+
 def test_基本转换(tmp_path):
     img_dir = tmp_path / "images"
     img_dir.mkdir()
@@ -67,10 +65,10 @@ def test_基本转换(tmp_path):
     parts = lines[0].split()
     assert parts[0] == "3"  # 轿车 → cls_id 3
     xc, yc, bw, bh = float(parts[1]), float(parts[2]), float(parts[3]), float(parts[4])
-    assert abs(xc - 0.2) < 1e-4   # (100 + 100) / 1000
-    assert abs(yc - 0.2) < 1e-4   # (50 + 50) / 500
-    assert abs(bw - 0.2) < 1e-4   # 200 / 1000
-    assert abs(bh - 0.2) < 1e-4   # 100 / 500
+    assert abs(xc - 0.2) < 1e-4  # (100 + 100) / 1000
+    assert abs(yc - 0.2) < 1e-4  # (50 + 50) / 500
+    assert abs(bw - 0.2) < 1e-4  # 200 / 1000
+    assert abs(bh - 0.2) < 1e-4  # 100 / 500
 
 
 def test_忽略区域被过滤(tmp_path):
@@ -140,6 +138,7 @@ def test_零尺寸框被跳过(tmp_path):
 
 # ── convert_split ────────────────────────────────────────────────────────────
 
+
 def test_整体转换流程(tmp_visdrone_split):
     data_root, split = tmp_visdrone_split
     stats = convert_split(data_root, split, "jpg")
@@ -158,9 +157,11 @@ def test_标注目录不存在时跳过(tmp_path):
 
 # ── CLI 参数 ─────────────────────────────────────────────────────────────────
 
+
 def test_默认参数(monkeypatch):
     monkeypatch.setattr("sys.argv", ["convert_visdrone_to_yolo.py"])
     from scripts.convert_visdrone_to_yolo import parse_args
+
     args = parse_args()
     assert args.data_root == "data"
     assert args.splits == ["train", "val"]
@@ -170,9 +171,18 @@ def test_默认参数(monkeypatch):
 def test_自定义参数(monkeypatch):
     monkeypatch.setattr(
         "sys.argv",
-        ["convert_visdrone_to_yolo.py", "--data-root", "/tmp/data", "--splits", "val", "--img-ext", "png"],
+        [
+            "convert_visdrone_to_yolo.py",
+            "--data-root",
+            "/tmp/data",
+            "--splits",
+            "val",
+            "--img-ext",
+            "png",
+        ],
     )
     from scripts.convert_visdrone_to_yolo import parse_args
+
     args = parse_args()
     assert args.data_root == "/tmp/data"
     assert args.splits == ["val"]

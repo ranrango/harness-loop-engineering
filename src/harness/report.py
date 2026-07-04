@@ -94,7 +94,9 @@ def render_loop_report(data: LoopReportInput) -> str:
     if data.audit.ok:
         lines.append("- No blocking data quality issue detected by the audit.")
     else:
-        lines.append("- Data audit failed. Fix data quality before trusting training or validation metrics.")
+        lines.append(
+            "- Data audit failed. Fix data quality before trusting training or validation metrics."
+        )
     if not data.gate_report.ok:
         lines.append("- One or more metrics failed configured gates.")
     lines.extend(["", "## Next Experiments", ""])

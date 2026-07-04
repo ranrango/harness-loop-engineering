@@ -10,7 +10,6 @@ from typing import Any
 
 from src.harness.config import ExperimentConfig, load_experiment_config
 
-
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp"}
 
 

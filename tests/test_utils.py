@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -36,7 +36,7 @@ def test_run名称格式正确():
     name = build_run_name("train", "yolov8n")
     parts = name.split("_")
     assert parts[0] == "train"
-    assert len(parts[1]) == 8    # YYYYMMDD
+    assert len(parts[1]) == 8  # YYYYMMDD
     assert parts[1].isdigit()
     assert parts[2] == "yolov8n"
     assert parts[3] == "visdrone"

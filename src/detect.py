@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 from src.utils import build_run_name, resolve_model
 
@@ -28,7 +27,9 @@ def parse_args() -> argparse.Namespace:
         metavar="类别ID",
         help="只检测指定类别，例如 --classes 3 4 8 表示只检测轿车/面包车/公交车。",
     )
-    parser.add_argument("--save-txt", action="store_true", help="保存每张图片的 YOLO 格式标注文件。")
+    parser.add_argument(
+        "--save-txt", action="store_true", help="保存每张图片的 YOLO 格式标注文件。"
+    )
     parser.add_argument("--no-save", action="store_true", help="不保存带标注框的结果图片。")
     parser.add_argument(
         "--exist-ok",
@@ -69,6 +70,7 @@ def main() -> None:
 
     if results[0].boxes is not None and len(results[0].boxes):
         from collections import Counter
+
         from src.utils import VISDRONE_CLASSES
 
         counts: Counter[str] = Counter()

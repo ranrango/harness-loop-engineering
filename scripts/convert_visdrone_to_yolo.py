@@ -11,10 +11,8 @@ from __future__ import annotations
 
 import argparse
 import struct
-import zlib
 from dataclasses import dataclass
 from pathlib import Path
-
 
 # VisDrone 类别 ID 为 1-based（1–10），0 表示忽略区域。
 # 转换为 YOLO 的 0-based ID 时减 1。
@@ -24,11 +22,12 @@ NUM_CLASSES = 10
 @dataclass
 class ConvertStats:
     """单次转换的统计信息。"""
+
     images_processed: int = 0
     boxes_written: int = 0
-    boxes_skipped_ignored: int = 0   # category=0（忽略区域）
-    boxes_skipped_invalid: int = 0   # 尺寸为零或字段非法
-    files_missing_image: int = 0     # 找不到对应图片
+    boxes_skipped_ignored: int = 0  # category=0（忽略区域）
+    boxes_skipped_invalid: int = 0  # 尺寸为零或字段非法
+    files_missing_image: int = 0  # 找不到对应图片
 
     def merge(self, other: ConvertStats) -> None:
         self.images_processed += other.images_processed
@@ -67,8 +66,21 @@ def _read_image_dimensions(img_path: Path) -> tuple[int, int] | None:
                     if marker[0] != 0xFF:
                         break
                     length = struct.unpack(">H", fh.read(2))[0]
-                    if marker[1] in (0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7,
-                                     0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF):
+                    if marker[1] in (
+                        0xC0,
+                        0xC1,
+                        0xC2,
+                        0xC3,
+                        0xC5,
+                        0xC6,
+                        0xC7,
+                        0xC9,
+                        0xCA,
+                        0xCB,
+                        0xCD,
+                        0xCE,
+                        0xCF,
+                    ):
                         fh.read(1)  # 精度字段
                         h = struct.unpack(">H", fh.read(2))[0]
                         w = struct.unpack(">H", fh.read(2))[0]
