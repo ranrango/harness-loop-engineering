@@ -34,7 +34,7 @@ lint:
 	ruff check src/ scripts/ tests/
 
 format:
-	black --check src/ scripts/ tests/
+	black --check .
 
 convert:
 	$(PYTHON) scripts/convert_visdrone_to_yolo.py --data-root $(DATA_ROOT)

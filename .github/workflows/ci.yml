@@ -42,5 +42,5 @@ jobs:
         with:
           python-version: "3.11"
           cache: "pip"
-      - run: pip install black
-      - run: black --check src/ scripts/ tests/
+      - run: pip install "black==26.5.1"
+      - run: black --check .

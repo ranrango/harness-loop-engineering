@@ -22,25 +22,21 @@ def tmp_visdrone_split(tmp_path: Path):
     # 图片1：1000×750 JPEG，2个有效框 + 1个忽略区域（category=0）
     (img_dir / "img1.jpg").write_bytes(make_jpeg(1000, 750))
     (ann_dir / "img1.txt").write_text(
-        textwrap.dedent(
-            """\
+        textwrap.dedent("""\
             100,50,200,100,1,4,0,0
             300,200,80,60,1,1,0,0
             0,0,50,50,1,0,0,0
-        """
-        ),
+        """),
         encoding="utf-8",
     )
 
     # 图片2：640×480 JPEG，2个有效框
     (img_dir / "img2.jpg").write_bytes(make_jpeg(640, 480))
     (ann_dir / "img2.txt").write_text(
-        textwrap.dedent(
-            """\
+        textwrap.dedent("""\
             10,10,100,80,1,10,0,0
             200,150,50,40,1,8,0,0
-        """
-        ),
+        """),
         encoding="utf-8",
     )
 

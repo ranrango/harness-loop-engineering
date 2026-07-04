@@ -27,8 +27,8 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/ranrango/drone-object-detection"
-Issues = "https://github.com/ranrango/drone-object-detection/issues"
+Repository = "https://github.com/ranrango/harness-loop-engineering"
+Issues = "https://github.com/ranrango/harness-loop-engineering/issues"
 
 [project.scripts]
 drone-detect  = "src.detect:main"
@@ -46,7 +46,7 @@ dev   = [
     "pytest>=7.0",
     "pytest-cov",
     "ruff",
-    "black",
+    "black==26.5.1",
     "jupyter",
 ]
 
