@@ -36,6 +36,7 @@ drone-train   = "src.train:main"
 drone-val     = "src.val:main"
 drone-convert = "scripts.convert_visdrone_to_yolo:main"
 drone-audit-data = "src.harness.audit_data:main"
+drone-check-metrics = "src.harness.metrics:main"
 
 [project.optional-dependencies]
 smoke = ["langchain-openai>=0.1.0"]
