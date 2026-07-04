@@ -8,6 +8,10 @@
 
 **Tech Stack:** Python 3.9+, dataclasses, argparse, pathlib, json, subprocess, PyYAML, pytest, existing Makefile and setuptools console scripts.
 
+**Chinese companion:** `docs/superpowers/plans/2026-07-04-harness-loop-engineering.zh.md`
+
+**Documentation language convention:** User-facing project documents created after this plan should be Chinese-first. Add an English companion only when explicitly useful for publication or external review.
+
 ---
 
 ## File Map
