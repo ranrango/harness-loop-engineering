@@ -105,3 +105,24 @@ def test_验证默认参数(tmp_path, monkeypatch):
     assert args.conf == 0.001
     assert args.iou == 0.6
     assert args.batch == 8
+    assert args.metrics_output is None
+
+
+def test_验证支持指标输出路径(tmp_path, monkeypatch):
+    model = tmp_path / "best.pt"
+    model.write_text("fake")
+    metrics_path = tmp_path / "metrics.json"
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "val.py",
+            "--model",
+            str(model),
+            "--metrics-output",
+            str(metrics_path),
+        ],
+    )
+    from src.val import parse_args
+
+    args = parse_args()
+    assert args.metrics_output == str(metrics_path)

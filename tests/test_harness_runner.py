@@ -18,6 +18,8 @@ def test_build_all_stage_commands_with_skip_train(tmp_path):
     assert any("convert_visdrone_to_yolo.py" in item for item in command_text)
     assert not any("src.train" in item for item in command_text)
     assert any("src.val" in item for item in command_text)
+    assert any("--metrics-output" in item for item in command_text)
+    assert any(str(tmp_path / "run" / "metrics.json") in item for item in command_text)
 
 
 def test_build_audit_only_commands(tmp_path):

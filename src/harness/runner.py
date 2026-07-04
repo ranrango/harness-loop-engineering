@@ -117,6 +117,8 @@ def build_stage_commands(
                 str(config.val.iou),
                 "--project",
                 str(run_dir / "detect"),
+                "--metrics-output",
+                str(run_dir / "metrics.json"),
             ]
         )
     if stage in {"report", "all"}:
