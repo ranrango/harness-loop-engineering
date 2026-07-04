@@ -8,7 +8,7 @@
 
 **技术栈：** Python 3.9+、dataclasses、argparse、pathlib、json、subprocess、PyYAML、pytest、现有 Makefile 和 setuptools console scripts。
 
-**逐行代码源：** 英文计划 [2026-07-04-harness-loop-engineering.md](/Users/randemac/Desktop/我的项目/drone-object-detection-main-clean/docs/superpowers/plans/2026-07-04-harness-loop-engineering.md) 保留完整代码块。本中文版本是执行说明和文档约定的中文版本；执行时如需复制完整 Python 文件内容，使用英文计划中同名任务的代码块。
+**逐行代码源：** 英文计划 [2026-07-04-harness-loop-engineering.md](2026-07-04-harness-loop-engineering.md) 保留完整代码块。本中文版本是执行说明和文档约定的中文版本；执行时如需复制完整 Python 文件内容，使用英文计划中同名任务的代码块。
 
 **文档语言约定：** 从本计划之后，新建的用户可见项目文档默认使用中文优先；只有在发布、外部评审或明确需要时，再额外添加英文 companion。
 
@@ -653,4 +653,3 @@ git commit -m "chore: verify harness loop workflow"
 - 中文文档和 Makefile 快捷入口：Task 6 更新 README、Makefile，并新增 `docs/harness_loop.md`。
 - 不依赖真实数据、权重、GPU 或网络的轻量测试：Task 1 到 Task 5 都使用合成数据和直接单元测试。
 - 现有测试继续通过：Task 7 运行完整测试。
-
