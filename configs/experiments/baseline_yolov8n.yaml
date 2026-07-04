@@ -1,0 +1,40 @@
+experiment:
+  name: baseline_yolov8n
+  description: YOLOv8n VisDrone baseline loop
+
+data:
+  root: data
+  dataset_yaml: data.yaml
+  splits: [train, val]
+  image_ext: jpg
+  require_labels: true
+
+model:
+  weights: yolov8n.pt
+
+train:
+  enabled: true
+  epochs: 10
+  batch: 8
+  imgsz: 640
+  device: cpu
+  workers: 4
+  patience: 50
+
+val:
+  enabled: true
+  batch: 8
+  imgsz: 640
+  device: cpu
+  conf: 0.001
+  iou: 0.6
+
+gates:
+  map50_min: 0.258
+  map_min: 0.147
+  precision_min: 0.354
+  recall_min: 0.274
+  allowed_drop: 0.02
+
+outputs:
+  root: runs/harness
