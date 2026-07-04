@@ -89,6 +89,19 @@ make train         # 10 epoch 基线训练
 make val           # 验证最新权重
 ```
 
+## Harness 与 Loop 工程化
+
+本项目提供一套轻量实验线束，用于把数据审计、训练、验证、指标门槛和报告产物串成可重复闭环。
+
+```bash
+make audit            # 检查本地 VisDrone/YOLO 数据结构和标签质量
+make harness-dry-run  # 打印完整闭环命令，不执行训练
+make metrics-check    # 用 baseline 指标检查 gate
+```
+
+默认实验配置位于 `configs/experiments/baseline_yolov8n.yaml`。完整说明见
+[`docs/harness_loop.md`](docs/harness_loop.md)。
+
 ---
 
 ## 数据集
