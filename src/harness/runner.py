@@ -122,23 +122,32 @@ def build_stage_commands(
             ]
         )
     if stage in {"report", "all"}:
-        commands.append(
-            [
-                sys.executable,
-                "-m",
-                "src.harness.report",
-                "--config",
-                str(config.path),
-                "--audit-json",
-                str(run_dir / "audit.json"),
-                "--metrics",
-                str(run_dir / "metrics.json"),
-                "--timestamp",
-                run_dir.name,
-                "--output",
-                str(run_dir / "loop_report.md"),
-            ]
-        )
+        report_command = [
+            sys.executable,
+            "-m",
+            "src.harness.report",
+            "--config",
+            str(config.path),
+            "--audit-json",
+            str(run_dir / "audit.json"),
+            "--metrics",
+            str(run_dir / "metrics.json"),
+            "--timestamp",
+            run_dir.name,
+            "--output",
+            str(run_dir / "loop_report.md"),
+            "--commands-file",
+            str(run_dir / "commands.txt"),
+        ]
+        for artifact_name in (
+            "resolved_config.yaml",
+            "audit.json",
+            "metrics.json",
+            "commands.txt",
+            "loop_report.md",
+        ):
+            report_command.extend(["--artifact", str(run_dir / artifact_name)])
+        commands.append(report_command)
     return commands
 
 

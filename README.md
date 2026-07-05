@@ -126,7 +126,7 @@ drone-audit-data --config configs/experiments/baseline_yolov8n.yaml --format mar
 ```bash
 drone-check-metrics \
   --config configs/experiments/baseline_yolov8n.yaml \
-  --metrics runs/harness/<run_id>/metrics.json
+  --metrics runs/harness/<experiment>/<timestamp>/metrics.json
 ```
 
 这个例子把验证输出当作机器可读的质量信号，与配置里的 gate 阈值比较。通过或失败都生成结构化结果，供 CI、报告和人工 review 使用。
@@ -149,10 +149,11 @@ drone-run-harness \
 ```bash
 drone-loop-report \
   --config configs/experiments/baseline_yolov8n.yaml \
-  --run-dir runs/harness/<run_id>
+  --run-dir runs/harness/<experiment>/<timestamp>
 ```
 
 这个例子把审计结果、验证指标、gate 状态和规则化建议汇总成 Markdown 报告。报告关注“下一轮该检查数据、调阈值、扩训练预算，还是停止发布”，让实验从一次性脚本变成可追踪的迭代闭环。
+使用 `--run-dir` 时，CLI 会自动读取该目录下的 `audit.json`、`metrics.json` 和 `commands.txt`，并把 `resolved_config.yaml`、审计结果、指标、命令记录和报告本身列为可追溯产物。
 
 ---
 
@@ -203,10 +204,10 @@ make metrics-check    # 用 baseline 指标检查 gate
 drone-audit-data --config configs/experiments/baseline_yolov8n.yaml
 drone-run-harness --config configs/experiments/baseline_yolov8n.yaml --stage audit --dry-run
 drone-check-metrics --config configs/experiments/baseline_yolov8n.yaml --metrics runs/.../metrics.json
-drone-loop-report --config configs/experiments/baseline_yolov8n.yaml --run-dir runs/harness/<run_id>
+drone-loop-report --config configs/experiments/baseline_yolov8n.yaml --run-dir runs/harness/<experiment>/<timestamp>
 ```
 
-闭环产物会写入 `runs/harness/<run_id>/`，包括数据审计、验证指标、gate 检查和 Markdown 报告。
+闭环产物会写入 `runs/harness/<experiment>/<timestamp>/`，包括数据审计、验证指标、gate 检查和 Markdown 报告。
 
 ---
 
