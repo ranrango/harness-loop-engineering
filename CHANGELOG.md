@@ -13,8 +13,9 @@
 - `drone-run-harness` 生成报告时会把 `commands.txt` 和关键 artifacts 传入 loop report，增强实验可追溯性。
 - 新增 `drone-demo-loop` 和 `make demo-loop`，可在没有真实数据或权重时生成自包含 Harness/Loop demo run。
 - 新增 `drone-compare-runs` 和 `make compare-runs`，用于比较两轮 run 的审计状态、指标 delta、命令记录和下一步 loop 决策。
+- `drone-compare-runs` 新增 `--json-output`，可写出机器可读的跨轮指标 delta 和 loop 决策 JSON。
 - `drone-demo-loop` 新增 `--profile baseline|improved|regressed`，便于无资源演示跨轮对比。
-- CI 新增 Harness/Loop 示例验证 job，自动运行 demo run 生成、跨轮比较和报告内容检查。
+- CI 新增 Harness/Loop 示例验证 job，自动运行 demo run 生成、跨轮比较、Markdown 报告和 JSON 决策产物检查。
 
 ## [0.1.0] — 2026-07-05
 

@@ -122,6 +122,25 @@ def render_comparison_report(comparison: RunComparison) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
+def comparison_to_payload(comparison: RunComparison) -> dict[str, object]:
+    """Return a stable JSON-ready representation for CI and loop automation."""
+    return {
+        "schema_version": 1,
+        "base": _snapshot_payload(comparison.base),
+        "candidate": _snapshot_payload(comparison.candidate),
+        "metrics": {
+            item.name: {
+                "base": _round_metric(item.base),
+                "candidate": _round_metric(item.candidate),
+                "delta": _round_metric(item.delta),
+                "status": item.status,
+            }
+            for item in comparison.metrics
+        },
+        "loop_decision": comparison.recommendations,
+    }
+
+
 def _metric_delta(name: str, base: float, candidate: float, min_delta: float) -> MetricDelta:
     delta = candidate - base
     if delta >= min_delta:
@@ -138,6 +157,23 @@ def _audit_row(label: str, snapshot: RunSnapshot) -> str:
     return f"| {label} | {status} | {snapshot.error_count} | {snapshot.warning_count} |"
 
 
+def _snapshot_payload(snapshot: RunSnapshot) -> dict[str, object]:
+    return {
+        "run_dir": str(snapshot.run_dir),
+        "audit": {
+            "ok": snapshot.audit_ok,
+            "error_count": snapshot.error_count,
+            "warning_count": snapshot.warning_count,
+        },
+        "metrics": {name: _round_metric(value) for name, value in snapshot.metrics.items()},
+        "commands": snapshot.commands,
+    }
+
+
+def _round_metric(value: float) -> float:
+    return round(value, 6)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Compare two Harness/Loop run directories.",
@@ -147,22 +183,28 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--candidate-run", required=True)
     parser.add_argument("--min-delta", type=float, default=0.005)
     parser.add_argument("--output", default=None)
+    parser.add_argument("--json-output", default=None)
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    report = render_comparison_report(
-        compare_runs(
-            base_run=args.base_run,
-            candidate_run=args.candidate_run,
-            min_delta=args.min_delta,
-        )
+    comparison = compare_runs(
+        base_run=args.base_run,
+        candidate_run=args.candidate_run,
+        min_delta=args.min_delta,
     )
+    report = render_comparison_report(comparison)
     if args.output:
         Path(args.output).write_text(report, encoding="utf-8")
     else:
         print(report, end="")
+    if args.json_output:
+        payload = comparison_to_payload(comparison)
+        Path(args.json_output).write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
 
 
 if __name__ == "__main__":

@@ -181,7 +181,9 @@ drone-demo-loop --profile baseline --timestamp baseline
 drone-demo-loop --profile improved --timestamp improved
 drone-compare-runs \
   --base-run runs/harness-demo/harness_loop_demo/baseline \
-  --candidate-run runs/harness-demo/harness_loop_demo/improved
+  --candidate-run runs/harness-demo/harness_loop_demo/improved \
+  --output runs/harness-demo/comparison.md \
+  --json-output runs/harness-demo/comparison.json
 ```
 
 下载 VisDrone2019-DET 数据集并放置到 `data/` 目录后，运行：
@@ -225,12 +227,12 @@ drone-run-harness --config configs/experiments/baseline_yolov8n.yaml --stage aud
 drone-check-metrics --config configs/experiments/baseline_yolov8n.yaml --metrics runs/.../metrics.json
 drone-loop-report --config configs/experiments/baseline_yolov8n.yaml --run-dir runs/harness/<experiment>/<timestamp>
 drone-demo-loop --profile baseline
-drone-compare-runs --base-run runs/harness/<old> --candidate-run runs/harness/<new>
+drone-compare-runs --base-run runs/harness/<old> --candidate-run runs/harness/<new> --json-output runs/harness/comparison.json
 ```
 
 闭环产物会写入 `runs/harness/<experiment>/<timestamp>/`，包括数据审计、验证指标、gate 检查和 Markdown 报告。
 自包含 demo 产物会写入 `runs/harness-demo/harness_loop_demo/<timestamp>/`，用于快速查看报告结构和证据链。
-跨轮对比报告会读取两次 run 的 `audit.json`、`metrics.json` 和 `commands.txt`，输出指标 delta、审计状态变化和下一步 loop 决策建议。
+跨轮对比报告会读取两次 run 的 `audit.json`、`metrics.json` 和 `commands.txt`，输出指标 delta、审计状态变化和下一步 loop 决策建议；`--json-output` 会额外写出机器可读 JSON，供 CI、页面或后续自动化读取。
 
 ---
 

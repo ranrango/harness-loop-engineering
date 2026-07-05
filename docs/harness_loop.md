@@ -88,7 +88,9 @@ drone-demo-loop --profile baseline --timestamp baseline
 drone-demo-loop --profile improved --timestamp improved
 drone-compare-runs \
   --base-run runs/harness-demo/harness_loop_demo/baseline \
-  --candidate-run runs/harness-demo/harness_loop_demo/improved
+  --candidate-run runs/harness-demo/harness_loop_demo/improved \
+  --output runs/harness-demo/comparison.md \
+  --json-output runs/harness-demo/comparison.json
 ```
 
 `drone-compare-runs` 会读取两次 run 的 `audit.json`、`metrics.json` 和 `commands.txt`，输出：
@@ -97,6 +99,8 @@ drone-compare-runs \
 - `precision`、`recall`、`map50`、`map` 的 base/candidate/delta/status。
 - 候选 run 的命令记录。
 - 下一步 loop 决策建议，例如提升为下一轮 baseline、回滚复查或继续收集失败样本。
+
+如果传入 `--json-output`，命令会同时写出机器可读 JSON，包含 `schema_version`、base/candidate 审计摘要、指标 delta 和 `loop_decision`。这个文件适合被 CI、仪表盘或后续 loop automation 直接读取。
 
 该比较同样适用于真实 `drone-run-harness` 产生的 run 目录。
 
