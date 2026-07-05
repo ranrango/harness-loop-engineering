@@ -15,8 +15,10 @@ Harness Engineering 代码示例
 # ─────────────────────────────────────────────────────────
 
 from __future__ import annotations
+
 import json
 import re
+from dataclasses import dataclass
 
 
 def build_structured_prompt(user_query: str, schema: dict) -> str:
@@ -142,13 +144,6 @@ def check_no_refusal(output: str) -> tuple[bool, str]:
 customer_service_guardrail = (
     OutputGuardrail().add_check("no_pii", check_no_pii).add_check("length", check_length(20, 500))
 )
-
-
-# ─────────────────────────────────────────────────────────
-# 3. Eval 框架骨架
-# ─────────────────────────────────────────────────────────
-
-from dataclasses import dataclass
 
 
 @dataclass
@@ -297,7 +292,7 @@ if __name__ == "__main__":
 
     print("\n=== 2. Guardrail 验证 ===")
     safe_output = "您好！您的订单将在 3 个工作日内发货，请耐心等待。"
-    risky_output = "您好！请联系 13812345678 获取帮助。"
+    risky_output = "您好！请联系 support@example.com 获取帮助。"
 
     passed, failures = customer_service_guardrail.validate(safe_output)
     print(f"安全输出: {'通过 ✓' if passed else '失败 ✗'}")
@@ -314,7 +309,10 @@ if __name__ == "__main__":
             forbidden_keywords=["手机", "电话"],
         ),
     ]
-    mock_llm = lambda prompt: "您的订单将在 3 个工作日内发货。"
+
+    def mock_llm(prompt: str) -> str:
+        return "您的订单将在 3 个工作日内发货。"
+
     report = run_eval_suite(eval_cases, mock_llm)
     print(f"Eval 结果: {report['passed']}/{report['total']} 通过，平均分 {report['avg_score']:.2f}")
 
