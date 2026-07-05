@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -124,6 +125,7 @@ def render_comparison_report(comparison: RunComparison) -> str:
 
 def comparison_to_payload(comparison: RunComparison) -> dict[str, object]:
     """Return a stable JSON-ready representation for CI and loop automation."""
+    regression_gate = evaluate_regression_gate(comparison)
     return {
         "schema_version": 1,
         "base": _snapshot_payload(comparison.base),
@@ -138,6 +140,26 @@ def comparison_to_payload(comparison: RunComparison) -> dict[str, object]:
             for item in comparison.metrics
         },
         "loop_decision": comparison.recommendations,
+        "regression_gate": regression_gate,
+    }
+
+
+def evaluate_regression_gate(comparison: RunComparison) -> dict[str, object]:
+    metric_regression = any(item.status == "REGRESSED" for item in comparison.metrics)
+    audit_regression = comparison.base.audit_ok and not comparison.candidate.audit_ok
+    reasons: list[str] = []
+    if metric_regression:
+        regressed = ", ".join(
+            item.name for item in comparison.metrics if item.status == "REGRESSED"
+        )
+        reasons.append(f"metric regression detected: {regressed}")
+    if audit_regression:
+        reasons.append("audit regression detected: candidate failed after base passed")
+    return {
+        "passed": not (metric_regression or audit_regression),
+        "metric_regression": metric_regression,
+        "audit_regression": audit_regression,
+        "reasons": reasons,
     }
 
 
@@ -184,6 +206,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-delta", type=float, default=0.005)
     parser.add_argument("--output", default=None)
     parser.add_argument("--json-output", default=None)
+    parser.add_argument(
+        "--fail-on-regression",
+        action="store_true",
+        help="Exit with status 1 when the candidate run regresses against the base run.",
+    )
     return parser.parse_args()
 
 
@@ -205,6 +232,12 @@ def main() -> None:
             json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
+    if args.fail_on_regression:
+        regression_gate = evaluate_regression_gate(comparison)
+        if not regression_gate["passed"]:
+            reasons = "; ".join(regression_gate["reasons"])
+            print(f"Loop regression gate failed: {reasons}", file=sys.stderr)
+            raise SystemExit(1)
 
 
 if __name__ == "__main__":

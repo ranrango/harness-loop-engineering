@@ -5,6 +5,8 @@ import importlib.util
 import json
 import sys
 
+import pytest
+
 from src.harness.demo import create_demo_loop
 
 
@@ -100,3 +102,49 @@ def test_compare_main_writes_machine_readable_json_output(tmp_path, monkeypatch)
     assert payload["metrics"]["map50"]["delta"] == 0.04
     assert payload["metrics"]["map50"]["status"] == "IMPROVED"
     assert payload["loop_decision"][0].startswith("候选 run 整体改善")
+
+
+def test_comparison_payload_includes_regression_gate_status(tmp_path):
+    compare = importlib.import_module("src.harness.compare")
+    base = create_demo_loop(output_root=tmp_path, timestamp="baseline", profile="baseline")
+    candidate = create_demo_loop(output_root=tmp_path, timestamp="candidate", profile="regressed")
+
+    comparison = compare.compare_runs(
+        base_run=base.run_dir,
+        candidate_run=candidate.run_dir,
+        min_delta=0.005,
+    )
+    payload = compare.comparison_to_payload(comparison)
+
+    assert payload["regression_gate"]["passed"] is False
+    assert payload["regression_gate"]["metric_regression"] is True
+    assert payload["regression_gate"]["audit_regression"] is False
+    assert any("metric regression" in reason for reason in payload["regression_gate"]["reasons"])
+
+
+def test_compare_main_can_fail_ci_on_regression(tmp_path, monkeypatch):
+    compare = importlib.import_module("src.harness.compare")
+    base = create_demo_loop(output_root=tmp_path, timestamp="baseline", profile="baseline")
+    candidate = create_demo_loop(output_root=tmp_path, timestamp="candidate", profile="regressed")
+    json_output = tmp_path / "comparison.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "drone-compare-runs",
+            "--base-run",
+            str(base.run_dir),
+            "--candidate-run",
+            str(candidate.run_dir),
+            "--json-output",
+            str(json_output),
+            "--fail-on-regression",
+        ],
+    )
+
+    with pytest.raises(SystemExit) as exc:
+        compare.main()
+
+    assert exc.value.code == 1
+    payload = json.loads(json_output.read_text(encoding="utf-8"))
+    assert payload["regression_gate"]["passed"] is False

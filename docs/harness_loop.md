@@ -90,7 +90,8 @@ drone-compare-runs \
   --base-run runs/harness-demo/harness_loop_demo/baseline \
   --candidate-run runs/harness-demo/harness_loop_demo/improved \
   --output runs/harness-demo/comparison.md \
-  --json-output runs/harness-demo/comparison.json
+  --json-output runs/harness-demo/comparison.json \
+  --fail-on-regression
 ```
 
 `drone-compare-runs` 会读取两次 run 的 `audit.json`、`metrics.json` 和 `commands.txt`，输出：
@@ -100,7 +101,9 @@ drone-compare-runs \
 - 候选 run 的命令记录。
 - 下一步 loop 决策建议，例如提升为下一轮 baseline、回滚复查或继续收集失败样本。
 
-如果传入 `--json-output`，命令会同时写出机器可读 JSON，包含 `schema_version`、base/candidate 审计摘要、指标 delta 和 `loop_decision`。这个文件适合被 CI、仪表盘或后续 loop automation 直接读取。
+如果传入 `--json-output`，命令会同时写出机器可读 JSON，包含 `schema_version`、base/candidate 审计摘要、指标 delta、`loop_decision` 和 `regression_gate`。这个文件适合被 CI、仪表盘或后续 loop automation 直接读取。
+
+如果传入 `--fail-on-regression`，命令会在发现候选 run 出现指标退化，或数据审计从 PASS 变 FAIL 时返回非零退出码。Markdown/JSON 产物会先写入，再触发失败，方便 CI 失败后仍能查看证据。
 
 该比较同样适用于真实 `drone-run-harness` 产生的 run 目录。
 
