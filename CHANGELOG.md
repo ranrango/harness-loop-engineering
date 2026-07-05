@@ -9,6 +9,8 @@
 - README 首页不再展示检测 baseline 的性能结果内容。
 - README 明确说明检测 baseline 来源于 `ranrango/drone-object-detection`，本仓库侧重 Harness/Loop 工程化。
 - README 新增数据契约审计、指标门槛、实验 dry-run 和 loop report 四个 Harness/Loop 示例。
+- `drone-loop-report` 新增 `--run-dir` 入口，可自动读取单轮 run 的审计、指标、命令记录和默认产物。
+- `drone-run-harness` 生成报告时会把 `commands.txt` 和关键 artifacts 传入 loop report，增强实验可追溯性。
 
 ## [0.1.0] — 2026-07-05
 

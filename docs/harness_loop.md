@@ -74,6 +74,16 @@ runs/harness/<experiment>/<timestamp>/
 
 这些产物属于运行输出，不提交进 Git。
 
+生成 loop report 时可以直接指向一次 run 目录：
+
+```bash
+drone-loop-report \
+  --config configs/experiments/baseline_yolov8n.yaml \
+  --run-dir runs/harness/<experiment>/<timestamp>
+```
+
+`--run-dir` 会自动推导 `audit.json`、`metrics.json`、`commands.txt` 和 `loop_report.md` 的位置，并把 `resolved_config.yaml`、审计文件、指标文件、命令记录和报告文件列入报告的 Artifacts 区域。这样报告不仅说明指标是否过 gate，也能回答“这轮实验到底执行了哪些命令、留下了哪些证据”。
+
 ## 指标门槛
 
 默认 gate 使用当前 README 中的 baseline 指标：
