@@ -56,6 +56,27 @@ python3 -m src.harness.runner \
   --stage all
 ```
 
+## 自包含 Demo
+
+如果还没有 VisDrone 数据集或模型权重，可以先生成一个只用于 Harness/Loop 演示的 synthetic run：
+
+```bash
+drone-demo-loop
+# 或
+make demo-loop
+```
+
+该命令会写入 `runs/harness-demo/harness_loop_demo/<timestamp>/`，包含：
+
+- `resolved_config.yaml`
+- `demo_data/`
+- `audit.json`
+- `metrics.json`
+- `commands.txt`
+- `loop_report.md`
+
+这个 demo 不训练模型，也不声明检测精度；它只演示一次闭环实验应该留下哪些可审计证据，以及 loop report 如何把数据审计、指标 gate、命令记录和下一轮建议串起来。
+
 ## 输出目录
 
 Harness 输出位于：

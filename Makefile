@@ -5,7 +5,7 @@ PYTHON ?= python3
 DATA_ROOT ?= data
 HARNESS_CONFIG ?= configs/experiments/baseline_yolov8n.yaml
 
-.PHONY: help install install-dev test lint format convert train val audit harness-dry-run metrics-check
+.PHONY: help install install-dev test lint format convert train val audit harness-dry-run metrics-check demo-loop
 
 help:
 	@echo "可用命令："
@@ -20,6 +20,7 @@ help:
 	@echo "  audit        运行 harness 数据审计"
 	@echo "  harness-dry-run  打印完整 harness 闭环命令但不训练"
 	@echo "  metrics-check     使用命令行指标检查 baseline gate"
+	@echo "  demo-loop         生成无需真实数据/权重的 Harness/Loop demo run"
 
 install:
 	$(PYTHON) -m pip install -e .
@@ -70,3 +71,6 @@ harness-dry-run:
 
 metrics-check:
 	$(PYTHON) -m src.harness.metrics --config $(HARNESS_CONFIG) --precision 0.354 --recall 0.274 --map50 0.258 --map 0.147
+
+demo-loop:
+	$(PYTHON) -m src.harness.demo
