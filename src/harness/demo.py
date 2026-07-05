@@ -27,21 +27,39 @@ class DemoLoopResult:
     report_path: Path
 
 
-DEMO_METRICS = {
-    "precision": 0.39,
-    "recall": 0.31,
-    "map50": 0.29,
-    "map": 0.16,
+DEMO_METRIC_PROFILES = {
+    "baseline": {
+        "precision": 0.39,
+        "recall": 0.31,
+        "map50": 0.29,
+        "map": 0.16,
+    },
+    "improved": {
+        "precision": 0.42,
+        "recall": 0.35,
+        "map50": 0.33,
+        "map": 0.18,
+    },
+    "regressed": {
+        "precision": 0.31,
+        "recall": 0.22,
+        "map50": 0.21,
+        "map": 0.12,
+    },
 }
 
 
 def create_demo_loop(
     output_root: str | Path = "runs/harness-demo",
     timestamp: str | None = None,
+    profile: str = "baseline",
 ) -> DemoLoopResult:
+    if profile not in DEMO_METRIC_PROFILES:
+        raise ValueError(f"unknown demo metric profile: {profile}")
     stamp = timestamp or datetime.now().strftime("%Y%m%d_%H%M%S")
     run_dir = Path(output_root) / "harness_loop_demo" / stamp
     run_dir.mkdir(parents=True, exist_ok=False)
+    metrics = DEMO_METRIC_PROFILES[profile]
 
     data_root = run_dir / "demo_data"
     _write_demo_dataset(data_root)
@@ -56,10 +74,10 @@ def create_demo_loop(
         encoding="utf-8",
     )
     (run_dir / "metrics.json").write_text(
-        json.dumps(DEMO_METRICS, ensure_ascii=False, indent=2),
+        json.dumps(metrics, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    _write_commands_file(run_dir)
+    _write_commands_file(run_dir, profile)
 
     artifacts = [
         str(run_dir / artifact_name)
@@ -73,13 +91,13 @@ def create_demo_loop(
         )
     ]
     paths = resolve_report_paths(run_dir=run_dir, artifacts=artifacts)
-    gate_report = check_metric_gates(config, DEMO_METRICS)
+    gate_report = check_metric_gates(config, metrics)
     report = render_loop_report(
         LoopReportInput(
             experiment_name=config.experiment.name,
             timestamp=paths.timestamp,
             audit=audit,
-            metrics=DEMO_METRICS,
+            metrics=metrics,
             gate_report=gate_report,
             commands=load_commands_file(paths.commands_file),
             artifacts=paths.artifacts,
@@ -155,8 +173,9 @@ def _write_demo_config(path: Path, data_root: Path, dataset_yaml: Path) -> None:
     path.write_text(yaml.safe_dump(raw, allow_unicode=True, sort_keys=False), encoding="utf-8")
 
 
-def _write_commands_file(run_dir: Path) -> None:
+def _write_commands_file(run_dir: Path, profile: str) -> None:
     commands = [
+        f"drone-demo-loop --profile {profile}",
         "drone-audit-data --config resolved_config.yaml --format json --output audit.json",
         "drone-check-metrics --config resolved_config.yaml --metrics metrics.json",
         "drone-loop-report --config resolved_config.yaml --run-dir .",
@@ -171,12 +190,17 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--output-root", default="runs/harness-demo")
     parser.add_argument("--timestamp", default=None)
+    parser.add_argument("--profile", choices=sorted(DEMO_METRIC_PROFILES), default="baseline")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    result = create_demo_loop(output_root=args.output_root, timestamp=args.timestamp)
+    result = create_demo_loop(
+        output_root=args.output_root,
+        timestamp=args.timestamp,
+        profile=args.profile,
+    )
     print(f"Demo harness loop directory: {result.run_dir}")
     print(f"Demo loop report: {result.report_path}")
 

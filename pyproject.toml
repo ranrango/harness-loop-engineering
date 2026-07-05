@@ -40,6 +40,7 @@ drone-check-metrics = "src.harness.metrics:main"
 drone-loop-report = "src.harness.report:main"
 drone-run-harness = "src.harness.runner:main"
 drone-demo-loop = "src.harness.demo:main"
+drone-compare-runs = "src.harness.compare:main"
 
 [project.optional-dependencies]
 smoke = ["langchain-openai>=0.1.0"]

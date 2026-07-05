@@ -12,6 +12,8 @@
 - `drone-loop-report` 新增 `--run-dir` 入口，可自动读取单轮 run 的审计、指标、命令记录和默认产物。
 - `drone-run-harness` 生成报告时会把 `commands.txt` 和关键 artifacts 传入 loop report，增强实验可追溯性。
 - 新增 `drone-demo-loop` 和 `make demo-loop`，可在没有真实数据或权重时生成自包含 Harness/Loop demo run。
+- 新增 `drone-compare-runs` 和 `make compare-runs`，用于比较两轮 run 的审计状态、指标 delta、命令记录和下一步 loop 决策。
+- `drone-demo-loop` 新增 `--profile baseline|improved|regressed`，便于无资源演示跨轮对比。
 
 ## [0.1.0] — 2026-07-05
 

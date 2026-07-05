@@ -170,10 +170,19 @@ pip install -e .
 不下载数据、不准备权重，也可以先跑一个 Harness/Loop 自包含 demo：
 
 ```bash
-drone-demo-loop
+drone-demo-loop --profile baseline
 ```
 
 它会生成 `runs/harness-demo/harness_loop_demo/<timestamp>/`，包含 synthetic 数据审计、示例指标、命令记录和 `loop_report.md`。这个 demo 用来展示闭环工程产物，不代表检测模型性能。
+如果要演示跨轮对比，可以生成两轮 demo run：
+
+```bash
+drone-demo-loop --profile baseline --timestamp baseline
+drone-demo-loop --profile improved --timestamp improved
+drone-compare-runs \
+  --base-run runs/harness-demo/harness_loop_demo/baseline \
+  --candidate-run runs/harness-demo/harness_loop_demo/improved
+```
 
 下载 VisDrone2019-DET 数据集并放置到 `data/` 目录后，运行：
 
@@ -193,6 +202,7 @@ make convert          # 转换 VisDrone 标注
 make train            # 10 epoch 基线训练
 make val              # 验证最新权重
 make demo-loop        # 生成无需真实数据/权重的 Harness/Loop demo
+make compare-runs     # 比较两轮 demo 或真实 harness run
 ```
 
 ---
@@ -214,11 +224,13 @@ drone-audit-data --config configs/experiments/baseline_yolov8n.yaml
 drone-run-harness --config configs/experiments/baseline_yolov8n.yaml --stage audit --dry-run
 drone-check-metrics --config configs/experiments/baseline_yolov8n.yaml --metrics runs/.../metrics.json
 drone-loop-report --config configs/experiments/baseline_yolov8n.yaml --run-dir runs/harness/<experiment>/<timestamp>
-drone-demo-loop
+drone-demo-loop --profile baseline
+drone-compare-runs --base-run runs/harness/<old> --candidate-run runs/harness/<new>
 ```
 
 闭环产物会写入 `runs/harness/<experiment>/<timestamp>/`，包括数据审计、验证指标、gate 检查和 Markdown 报告。
 自包含 demo 产物会写入 `runs/harness-demo/harness_loop_demo/<timestamp>/`，用于快速查看报告结构和证据链。
+跨轮对比报告会读取两次 run 的 `audit.json`、`metrics.json` 和 `commands.txt`，输出指标 delta、审计状态变化和下一步 loop 决策建议。
 
 ---
 
@@ -277,6 +289,7 @@ drone-check-metrics  指标门槛检查
 drone-loop-report    生成单轮实验报告
 drone-run-harness    编排 audit/train/val/gate/report 工作流
 drone-demo-loop      生成无需真实数据/权重的 Harness/Loop demo
+drone-compare-runs   比较两轮 run 并输出 loop 决策报告
 ```
 
 示例：
