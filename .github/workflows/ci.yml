@@ -70,10 +70,14 @@ jobs:
           drone-compare-runs \
             --base-run runs/harness-demo/harness_loop_demo/baseline \
             --candidate-run runs/harness-demo/harness_loop_demo/improved \
-            --output runs/harness-demo/comparison.md
+            --output runs/harness-demo/comparison.md \
+            --json-output runs/harness-demo/comparison.json
 
-      - name: 检查 comparison report
+      - name: 检查 comparison outputs
         run: |
           test -s runs/harness-demo/comparison.md
+          test -s runs/harness-demo/comparison.json
           grep -q "Harness Loop Comparison" runs/harness-demo/comparison.md
           grep -q "Loop Decision" runs/harness-demo/comparison.md
+          grep -q '"loop_decision"' runs/harness-demo/comparison.json
+          grep -q '"status": "IMPROVED"' runs/harness-demo/comparison.json
