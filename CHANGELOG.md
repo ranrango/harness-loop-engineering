@@ -11,6 +11,7 @@
 - README 新增数据契约审计、指标门槛、实验 dry-run 和 loop report 四个 Harness/Loop 示例。
 - `drone-loop-report` 新增 `--run-dir` 入口，可自动读取单轮 run 的审计、指标、命令记录和默认产物。
 - `drone-run-harness` 生成报告时会把 `commands.txt` 和关键 artifacts 传入 loop report，增强实验可追溯性。
+- 新增 `drone-demo-loop` 和 `make demo-loop`，可在没有真实数据或权重时生成自包含 Harness/Loop demo run。
 
 ## [0.1.0] — 2026-07-05
 
