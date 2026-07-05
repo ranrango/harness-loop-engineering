@@ -35,3 +35,24 @@ def test_demo_loop_generates_traceable_run(tmp_path):
     assert "`" + str(result.run_dir / "demo_data") + "`" in report
     assert "`" + str(result.run_dir / "commands.txt") + "`" in report
     assert "指标达到当前门槛" in report
+
+
+def test_demo_loop_supports_metric_profiles(tmp_path):
+    demo = importlib.import_module("src.harness.demo")
+
+    baseline = demo.create_demo_loop(
+        output_root=tmp_path,
+        timestamp="baseline",
+        profile="baseline",
+    )
+    improved = demo.create_demo_loop(
+        output_root=tmp_path,
+        timestamp="improved",
+        profile="improved",
+    )
+
+    baseline_metrics = json.loads((baseline.run_dir / "metrics.json").read_text(encoding="utf-8"))
+    improved_metrics = json.loads((improved.run_dir / "metrics.json").read_text(encoding="utf-8"))
+
+    assert improved_metrics["map50"] > baseline_metrics["map50"]
+    assert improved_metrics["recall"] > baseline_metrics["recall"]

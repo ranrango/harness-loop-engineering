@@ -61,7 +61,7 @@ python3 -m src.harness.runner \
 如果还没有 VisDrone 数据集或模型权重，可以先生成一个只用于 Harness/Loop 演示的 synthetic run：
 
 ```bash
-drone-demo-loop
+drone-demo-loop --profile baseline
 # 或
 make demo-loop
 ```
@@ -76,6 +76,29 @@ make demo-loop
 - `loop_report.md`
 
 这个 demo 不训练模型，也不声明检测精度；它只演示一次闭环实验应该留下哪些可审计证据，以及 loop report 如何把数据审计、指标 gate、命令记录和下一轮建议串起来。
+
+`--profile` 可取 `baseline`、`improved`、`regressed`，用于构造不同指标走势的 synthetic run。
+
+## 跨轮对比
+
+Loop Engineering 的关键不是只看单轮结果，而是比较上一轮和候选轮的变化。可以用 demo profile 生成两轮 run：
+
+```bash
+drone-demo-loop --profile baseline --timestamp baseline
+drone-demo-loop --profile improved --timestamp improved
+drone-compare-runs \
+  --base-run runs/harness-demo/harness_loop_demo/baseline \
+  --candidate-run runs/harness-demo/harness_loop_demo/improved
+```
+
+`drone-compare-runs` 会读取两次 run 的 `audit.json`、`metrics.json` 和 `commands.txt`，输出：
+
+- 数据审计是否从 PASS 变成 FAIL。
+- `precision`、`recall`、`map50`、`map` 的 base/candidate/delta/status。
+- 候选 run 的命令记录。
+- 下一步 loop 决策建议，例如提升为下一轮 baseline、回滚复查或继续收集失败样本。
+
+该比较同样适用于真实 `drone-run-harness` 产生的 run 目录。
 
 ## 输出目录
 
