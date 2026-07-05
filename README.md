@@ -9,7 +9,7 @@
 本仓库把 **Harness Engineering（驾驭工程）** 与 **Loop Engineering（循环工程）** 的方法论，落到一个可运行、可测试、可复现的无人机目标检测项目中。
 
 - 概念层：系统整理 AI 应用中的 Harness/Loop 设计方法、组件和行业实践。
-- 工程层：基于 VisDrone2019-DET 与 YOLOv8n 构建小目标检测基线。
+- 工程层：以 YOLOv8n/VisDrone 检测基线作为被控实验对象，而不是重新主张新的检测精度结论。
 - 闭环层：用配置化实验、数据审计、训练、验证、指标门槛和报告生成形成可重复迭代流程。
 
 本仓库只包含源代码、配置文件、示例结果和复现文档。数据集、训练输出、模型权重和凭据文件均不纳入版本控制。
@@ -21,6 +21,7 @@
 | [v0.1.0 Release](https://github.com/ranrango/harness-loop-engineering/releases/tag/v0.1.0) | 当前公开发布版本 |
 | [Harness/Loop 使用说明](docs/harness_loop.md) | 数据审计、指标门槛、runner 和报告工作流 |
 | [实践手册](PRACTICAL_GUIDE.md) | Harness/Loop 方法论从概念到落地 |
+| [基线来源说明](#基线来源与本仓库侧重) | 区分检测基线与本仓库工程贡献 |
 | [复现指南](docs/reproducibility.md) | VisDrone + YOLOv8n 基线复现步骤 |
 | [Publication Checklist](PUBLICATION_CHECKLIST.md) | 发布安全边界和验证记录 |
 
@@ -95,48 +96,63 @@ harness-loop-engineering/
 
 ---
 
-## 实验结果
+## 基线来源与本仓库侧重
 
-基于 [VisDrone2019-DET](http://aiskyeye.com/) 数据集，使用 YOLOv8n 构建无人机航拍图像中的小目标检测基线。
+本仓库的检测 baseline 继承自 [ranrango/drone-object-detection](https://github.com/ranrango/drone-object-detection) 的 YOLOv8n/VisDrone 工程线，用作 Harness/Loop 示例中的稳定被控对象。首页不展示检测性能结果，因为这些不是本仓库新增的检测精度贡献。
 
-| 指标 | 数值 |
-|---|---:|
-| 精确率（Precision） | 0.354 |
-| 召回率（Recall） | 0.274 |
-| **mAP@0.5** | **0.258** |
-| mAP@0.5:0.95 | 0.147 |
+本仓库真正关注的问题是：
 
-基线配置：YOLOv8n · 10 epoch · batch=8 · imgsz=640 · CPU
+- 如何把一次目标检测实验描述成可审计、可复现的配置合约。
+- 如何在训练/验证前后自动检查数据、命令、指标和产物。
+- 如何把指标退化、数据异常和下一轮实验建议写入 loop report。
+- 如何把人工审批点放在“是否晋级模型/是否启动昂贵训练/是否发布结果”这些决策处。
 
-<details>
-<summary>逐类 AP@0.5</summary>
+历史检测结果和复现细节保留在 [docs/reproducibility.md](docs/reproducibility.md) 与 [docs/results.csv](docs/results.csv)，用于工程闭环验证。
 
-| 类别 | AP@0.5 |
-|---|---:|
-| 轿车 | 0.686 |
-| 公交车 | 0.333 |
-| 面包车 | 0.282 |
-| 行人 | 0.266 |
-| 摩托车 | 0.262 |
-| 人群 | 0.215 |
-| 卡车 | 0.231 |
-| 三轮车 | 0.172 |
-| 遮阳三轮车 | 0.082 |
-| 自行车 | 0.045 |
+---
 
-</details>
+## Harness/Loop 工程示例
 
-样本推理结果：
+### 1. Harness：数据契约审计
 
-![样本推理图](assets/codex_predict_bestpt_image_2.jpg)
+```bash
+drone-audit-data --config configs/experiments/baseline_yolov8n.yaml --format markdown
+```
 
-训练曲线与评估图表：
+这个例子不训练模型，而是把数据集目录、图片/标签配对、类别 ID、空标签和标注格式作为实验前置合约检查。它回答的是“这轮实验能不能开始”，不是“模型精度是多少”。
 
-| 训练指标曲线 | 混淆矩阵 |
-|---|---|
-| ![results](assets/results.png) | ![confusion](assets/confusion_matrix.png) |
+### 2. Harness：指标门槛 Gate
 
-![PR 曲线](assets/BoxPR_curve.png)
+```bash
+drone-check-metrics \
+  --config configs/experiments/baseline_yolov8n.yaml \
+  --metrics runs/harness/<run_id>/metrics.json
+```
+
+这个例子把验证输出当作机器可读的质量信号，与配置里的 gate 阈值比较。通过或失败都生成结构化结果，供 CI、报告和人工 review 使用。
+
+### 3. Loop：实验闭环 Dry Run
+
+```bash
+drone-run-harness \
+  --config configs/experiments/baseline_yolov8n.yaml \
+  --stage all \
+  --dry-run \
+  --skip-train \
+  --model runs/detect/train/weights/best.pt
+```
+
+这个例子展示一次完整 loop 会怎样编排：`audit -> train/val -> metric gate -> report`。`--dry-run` 只打印将要执行的步骤，适合在提交训练任务前做人工确认。
+
+### 4. Loop：报告与下一轮建议
+
+```bash
+drone-loop-report \
+  --config configs/experiments/baseline_yolov8n.yaml \
+  --run-dir runs/harness/<run_id>
+```
+
+这个例子把审计结果、验证指标、gate 状态和规则化建议汇总成 Markdown 报告。报告关注“下一轮该检查数据、调阈值、扩训练预算，还是停止发布”，让实验从一次性脚本变成可追踪的迭代闭环。
 
 ---
 
@@ -283,23 +299,12 @@ make train
 make val
 ```
 
-验证输出示例：
-
-```text
-────────────────────────────────────────
-  mAP@0.5      : 0.2576
-  mAP@0.5:0.95 : 0.1468
-  精确率       : 0.3538
-  召回率       : 0.2740
-────────────────────────────────────────
-```
-
 ---
 
 ## 已知局限
 
-- YOLOv8n 是最小变体；自行车、遮阳三轮车等小目标类别的 AP 较低。
-- CPU 上仅跑 10 个 epoch；使用 GPU 并延长至 50-100 epoch 可显著提升 mAP。
+- YOLOv8n 是最小变体；自行车、遮阳三轮车等小目标类别仍是主要误差来源。
+- CPU 上仅跑 10 个 epoch；使用 GPU 并延长至 50-100 epoch 可显著提升检测表现。
 - 当前使用 Ultralytics 默认增强策略，尚未针对小目标做专项优化。
 - VisDrone 官方未公开测试集标注；本项目所有指标均基于 val 集。
 
