@@ -59,7 +59,7 @@ harness-loop-engineering/
 ├── tests/                      # 单元测试
 ├── docs/                       # 环境、复现、Harness/Loop 使用文档
 ├── assets/                     # README 展示用结果图
-├── .github/workflows/ci.yml    # GitHub Actions：代码检查 + 测试
+├── .github/workflows/ci.yml    # GitHub Actions：代码检查、测试、Harness/Loop 示例验证
 ├── data.yaml                   # 数据集配置
 ├── pyproject.toml              # 包元数据、依赖、工具配置
 └── Makefile                    # 快捷命令

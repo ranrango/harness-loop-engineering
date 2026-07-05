@@ -142,6 +142,7 @@ drone-loop-report \
 ## 需要用户提供的资源
 
 实现和 CI 测试不需要额外资源。
+CI 会运行 self-contained demo run 和跨轮 compare report 检查，用 synthetic 数据验证 Harness/Loop 示例链路；不会下载 VisDrone、模型权重或执行真实训练。
 
 真实训练或验证需要：
 
