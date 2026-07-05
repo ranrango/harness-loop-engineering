@@ -44,3 +44,36 @@ jobs:
           cache: "pip"
       - run: pip install "black==24.8.0"
       - run: black --check .
+
+  harness-loop-demo:
+    name: Harness/Loop 示例验证
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 配置 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: 安装项目
+        run: pip install -e .
+
+      - name: 生成 self-contained demo runs
+        run: |
+          drone-demo-loop --output-root runs/harness-demo --timestamp baseline --profile baseline
+          drone-demo-loop --output-root runs/harness-demo --timestamp improved --profile improved
+
+      - name: 比较 demo runs
+        run: |
+          drone-compare-runs \
+            --base-run runs/harness-demo/harness_loop_demo/baseline \
+            --candidate-run runs/harness-demo/harness_loop_demo/improved \
+            --output runs/harness-demo/comparison.md
+
+      - name: 检查 comparison report
+        run: |
+          test -s runs/harness-demo/comparison.md
+          grep -q "Harness Loop Comparison" runs/harness-demo/comparison.md
+          grep -q "Loop Decision" runs/harness-demo/comparison.md
