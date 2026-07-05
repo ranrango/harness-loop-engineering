@@ -12,7 +12,7 @@ Loop Engineering 代码示例
 """
 
 from __future__ import annotations
-import json
+
 import time
 from dataclasses import dataclass, field
 from typing import Callable
@@ -168,10 +168,10 @@ def run_react_loop(
 
             # Human-in-the-Loop 检查
             if tool.risk_level in human_confirm_risks:
-                print(f"⚠️  高风险操作，需要人工确认")
+                print("⚠️  高风险操作，需要人工确认")
                 # 实际中这里弹出 UI 或发送通知等待确认
                 # 这里模拟自动批准
-                print(f"✓  [模拟] 人工已批准")
+                print("✓  [模拟] 人工已批准")
 
             step.observation = tool.fn(**step.action_input)
 
@@ -219,7 +219,6 @@ def run_plan_execute(goal: str):
 
     # 规划阶段
     tasks = mock_planner(goal)
-    task_map = {t.id: t for t in tasks}
     print(f"\n📋 规划完成，共 {len(tasks)} 个子任务:")
     for t in tasks:
         deps = f" (依赖: {t.depends_on})" if t.depends_on else ""
@@ -307,7 +306,7 @@ def run_reflexion_loop(task: str, max_attempts: int = 3) -> str:
         # 失败时生成反思
         reflection = f"上次回答了 '{answer}'，验证失败：{feedback}。需要重新检查计算过程。"
 
-    print(f"\n❌ 达到最大尝试次数，未能找到正确答案")
+    print("\n❌ 达到最大尝试次数，未能找到正确答案")
     return answer
 
 

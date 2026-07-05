@@ -1,6 +1,7 @@
 # Harness & Loop Engineering for Drone Object Detection
 
 [![CI](https://github.com/ranrango/harness-loop-engineering/actions/workflows/ci.yml/badge.svg)](https://github.com/ranrango/harness-loop-engineering/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/ranrango/harness-loop-engineering)](https://github.com/ranrango/harness-loop-engineering/releases/tag/v0.1.0)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/许可证-MIT-green)](LICENSE)
 [![YOLOv8](https://img.shields.io/badge/模型-YOLOv8n-orange)](https://github.com/ultralytics/ultralytics)
@@ -12,6 +13,16 @@
 - 闭环层：用配置化实验、数据审计、训练、验证、指标门槛和报告生成形成可重复迭代流程。
 
 本仓库只包含源代码、配置文件、示例结果和复现文档。数据集、训练输出、模型权重和凭据文件均不纳入版本控制。
+
+## 快速入口
+
+| 入口 | 说明 |
+|---|---|
+| [v0.1.0 Release](https://github.com/ranrango/harness-loop-engineering/releases/tag/v0.1.0) | 当前公开发布版本 |
+| [Harness/Loop 使用说明](docs/harness_loop.md) | 数据审计、指标门槛、runner 和报告工作流 |
+| [实践手册](PRACTICAL_GUIDE.md) | Harness/Loop 方法论从概念到落地 |
+| [复现指南](docs/reproducibility.md) | VisDrone + YOLOv8n 基线复现步骤 |
+| [Publication Checklist](PUBLICATION_CHECKLIST.md) | 发布安全边界和验证记录 |
 
 ---
 
@@ -183,6 +194,15 @@ drone-loop-report --config configs/experiments/baseline_yolov8n.yaml --run-dir r
 
 ---
 
+## 隐私与发布边界
+
+- 不提交真实 `.env`、API key、token、私钥或本机路径。
+- 不提交 VisDrone 原始数据、训练输出、模型权重或导出的推理结果目录。
+- `.env.example` 只保留空值占位；真实凭据只应存在于本地 shell、CI secrets 或未跟踪的 `.env` 文件中。
+- 发布前使用 `PUBLICATION_CHECKLIST.md` 中的检查项确认公开仓库内容。
+
+---
+
 ## 数据集
 
 **VisDrone2019-DET** 是无人机视角下的 10 类目标检测数据集。请从 [VisDrone 官网](http://aiskyeye.com/) 下载并确认许可条款后使用。
@@ -246,7 +266,7 @@ drone-val --model best.pt --metrics-output runs/harness/baseline/metrics.json
 make test      # 单元测试
 make lint      # ruff 检查
 make format    # black 检查
-black src/ scripts/ tests/
+black .
 ```
 
 完整贡献说明见 [CONTRIBUTING.md](CONTRIBUTING.md)。
