@@ -1,7 +1,7 @@
 # Harness 与 Loop 工程化设计
 
 日期：2026-07-04
-项目：`drone-object-detection-main-clean`
+项目：`ai-harness-loop-lab`
 
 ## 目标
 
@@ -335,4 +335,3 @@ GPU 是可选项。默认配置保持 CPU 安全，和当前 baseline 一致。
 - 不依赖真实数据或 YOLO 权重也能生成 loop report。
 - README 或文档解释完整闭环。
 - 现有测试和新增测试在本地通过。
-

@@ -1,12 +1,21 @@
 [project]
-name = "drone-object-detection"
+name = "ai-harness-loop-lab"
 version = "0.1.0"
-description = "基于 YOLOv8 在 VisDrone2019-DET 数据集上的无人机航拍小目标检测"
+description = "AI Harness/Loop lab using drone object detection as a reproducible case study"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [{ name = "ranrango" }]
-keywords = ["object-detection", "yolov8", "drone", "visdrone", "computer-vision"]
+keywords = [
+    "ai-engineering",
+    "harness-engineering",
+    "loop-engineering",
+    "object-detection",
+    "yolov8",
+    "drone",
+    "visdrone",
+    "computer-vision",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
@@ -27,8 +36,8 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/ranrango/harness-loop-engineering"
-Issues = "https://github.com/ranrango/harness-loop-engineering/issues"
+Repository = "https://github.com/ranrango/ai-harness-loop-lab"
+Issues = "https://github.com/ranrango/ai-harness-loop-lab/issues"
 
 [project.scripts]
 drone-detect  = "src.detect:main"

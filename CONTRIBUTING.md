@@ -5,8 +5,8 @@
 ## 环境准备
 
 ```bash
-git clone https://github.com/ranrango/harness-loop-engineering
-cd harness-loop-engineering
+git clone https://github.com/ranrango/ai-harness-loop-lab
+cd ai-harness-loop-lab
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 ```
@@ -57,7 +57,7 @@ make format    # black 格式检查（只读）
 
 ## 提交 Issue
 
-请在 https://github.com/ranrango/harness-loop-engineering/issues 提交问题，并包含：
+请在 https://github.com/ranrango/ai-harness-loop-lab/issues 提交问题，并包含：
 - Python 版本和操作系统
 - 复现步骤
 - 预期行为与实际行为
