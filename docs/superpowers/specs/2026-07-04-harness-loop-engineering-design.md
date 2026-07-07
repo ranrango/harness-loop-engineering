@@ -1,7 +1,7 @@
 # Harness and Loop Engineering Design
 
 Date: 2026-07-04
-Project: `drone-object-detection-main-clean`
+Project: `ai-harness-loop-lab`
 
 ## Purpose
 
@@ -354,4 +354,3 @@ The work is complete when:
 - A loop report can be generated without real data or YOLO weights.
 - README or docs explain the complete loop.
 - Existing tests and new tests pass locally.
-

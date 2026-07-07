@@ -6,6 +6,7 @@
 
 ### 变更
 
+- 仓库公开命名更新为 `ranrango/ai-harness-loop-lab`，README、贡献指南、发布清单和包元数据同步使用新名称。
 - README 首页不再展示检测 baseline 的性能结果内容。
 - README 明确说明检测 baseline 来源于 `ranrango/drone-object-detection`，本仓库侧重 Harness/Loop 工程化。
 - README 新增数据契约审计、指标门槛、实验 dry-run 和 loop report 四个 Harness/Loop 示例。
@@ -32,7 +33,7 @@
 ### 变更
 
 - 将仓库 README 合并为 Harness/Loop 方法论与无人机检测工程的一体化入口。
-- 将项目链接、贡献指南和仓库元数据更新到 `ranrango/harness-loop-engineering`。
+- 将项目链接、贡献指南和仓库元数据更新到 `ranrango/ai-harness-loop-lab`。
 - 固定 `black==24.8.0`，保持 Python 3.9 兼容并避免 CI 格式规则漂移。
 
 ### 修复

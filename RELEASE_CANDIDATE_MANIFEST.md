@@ -2,7 +2,7 @@
 
 Release: `v0.1.0`  
 Published: 2026-07-05  
-Repository: `ranrango/harness-loop-engineering`
+Repository: `ranrango/ai-harness-loop-lab`
 
 ## Included
 
